@@ -56,7 +56,7 @@ function WorstToTop(Data) {
 }
 
 function findCompaniesWithMultipleApps(data) {
-  const companies = data.slice(1).split('\n').reduce((acc, app) => {
+  const companies = data.reduce((acc, app) => {
     const company = app.split(';')[1];
     if (acc[company]) {
       acc[company] += 1;
@@ -82,7 +82,7 @@ const tableParsing = (content) => {
   console.log(`${top3}`);
   const worsttotop = WorstToTop(data);
   console.log(`Top downloads: ${worsttotop}`);
-  const CompaniesWithMultipleApps = findCompaniesWithMultipleApps(content);
+  const CompaniesWithMultipleApps = findCompaniesWithMultipleApps(data);
   console.log(`Top owner: ${CompaniesWithMultipleApps}`);
 };
 
