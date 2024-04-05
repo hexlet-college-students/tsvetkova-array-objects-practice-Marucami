@@ -42,7 +42,7 @@ function topThreePopularAppsInAustralia(data) {
 
 function WorstToTop(Data) {
   function calculateAverageDownloads(downloads) {
-    const totalDownloads = downloads.reduce((acc, curr) => acc + curr, 0);
+    const totalDownloads = downloads.reduce((acc, curr) => acc + parseInt(curr, 10), 0);
     return totalDownloads / downloads.length;
   }
 
@@ -50,10 +50,26 @@ function WorstToTop(Data) {
     const [name, , , , ...downloads] = appData.split(';');
     const averageDownloads = calculateAverageDownloads(downloads);
     return { name, averageDownloads };
-  }).sort((a, b) => a.averageDownloads - b.averageDownloads);
-
+  }).sort((a, b) => b.averageDownloads - a.averageDownloads);
   const appNames = apps.map((app) => app.name).join(', ');
   return appNames;
+}
+
+function findCompaniesWithMultipleApps(data) {
+  const companies = data.slice(1).split('\n').reduce((acc, app) => {
+    const company = app.split(';')[1];
+    if (acc[company]) {
+      acc[company] += 1;
+    } else {
+      acc[company] = 1;
+    }
+    return acc;
+  }, {});
+  const result = Object.entries(companies)
+    .filter(([, counter]) => counter >= 2)
+    .map(([company]) => company);
+
+  return result.join(', ');
 }
 
 const tableParsing = (content) => {
@@ -66,6 +82,8 @@ const tableParsing = (content) => {
   console.log(`${top3}`);
   const worsttotop = WorstToTop(data);
   console.log(`Top downloads: ${worsttotop}`);
+  const CompaniesWithMultipleApps = findCompaniesWithMultipleApps(content);
+  console.log(`Top owner: ${CompaniesWithMultipleApps}`);
 };
 
 // task 2
