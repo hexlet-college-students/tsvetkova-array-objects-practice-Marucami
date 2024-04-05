@@ -1,3 +1,4 @@
+
 // task 1
 function normaliseData(content) {
   const [, ...data] = content.trim().split('\n');
@@ -30,11 +31,13 @@ function getRangeOfDown(data) {
 }
 
 function topThreePopularAppsInAustralia(data) {
-  const appsData = data.map((line) => {
-    const [name, developer, downloadsInAustralia] = line.split(';');
-    return { name, developer, downloadsInAustralia: parseInt(downloadsInAustralia, 10) };
+  const appsData = data.map((str) => {
+    const appInfo = str.split(';');
+    const name = appInfo.at(0);
+    const downloadsInAustralia = parseInt(appInfo.at(5), 10);
+    return { name, downloadsInAustralia };
   });
-  const sortedApps = appsData.sort((a, b) => a.downloadsInAustralia - b.downloadsInAustralia);
+  const sortedApps = appsData.sort((a, b) => b.downloadsInAustralia - a.downloadsInAustralia);
   const topThreeApps = sortedApps.slice(0, 3);
   const appNames = topThreeApps.map((app) => app.name).join(', ');
   return `Top-3 Australia: ${appNames}`;
