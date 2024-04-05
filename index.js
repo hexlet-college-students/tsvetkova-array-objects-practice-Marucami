@@ -30,15 +30,15 @@ function getRangeOfDown(data) {
 }
 
 function topThreePopularAppsInAustralia(data) {
-  const appsData = data.slice(1).map((line) => {
-    const [name, developer, downloadsInAustralia] = line.split(';');
-    return { name, developer, downloadsInAustralia: parseInt(downloadsInAustralia, 10) };
+  const appsData = data.map((line) => {
+  const [name, developer, downloadsInAustralia] = line.split(';');
+  return { name, developer, downloadsInAustralia: parseInt(downloadsInAustralia, 10) };
   });
-  const sortedApps = appsData.sort((a, b) => a.name.localeCompare(b.name));
+  const sortedApps = appsData.sort((a, b) => a.downloadsInAustralia - b.downloadsInAustralia);
   const topThreeApps = sortedApps.slice(0, 3);
   const appNames = topThreeApps.map((app) => app.name).join(', ');
   return `Top-3 Australia: ${appNames}`;
-}
+ }
 
 function WorstToTop(Data) {
   function calculateAverageDownloads(downloads) {
