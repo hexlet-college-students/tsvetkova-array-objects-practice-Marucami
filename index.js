@@ -46,13 +46,13 @@ function WorstToTop(Data) {
     return totalDownloads / downloads.length;
   }
 
-  const applications = Data.map((appData) => {
-    const [name, , , , ...downloads] = appData;
+  const apps = Data.map((appData) => {
+    const [name, , , , ...downloads] = appData.split(';');
     const averageDownloads = calculateAverageDownloads(downloads);
     return { name, averageDownloads };
   }).sort((a, b) => a.averageDownloads - b.averageDownloads);
 
-  const appNames = applications.map((app) => app.name).join(', ');
+  const appNames = apps.map((app) => app.name).join(', ');
   return appNames;
 }
 
