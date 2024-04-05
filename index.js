@@ -1,4 +1,3 @@
-
 // task 1
 function normaliseData(content) {
   const [, ...data] = content.trim().split('\n');
@@ -39,7 +38,7 @@ function topThreePopularAppsInAustralia(data) {
   });
   const sortedApps = appsData.sort((a, b) => b.downloadsInAustralia - a.downloadsInAustralia);
   const topThreeApps = sortedApps.slice(0, 3);
-  const appNames = topThreeApps.map((app) => app.name).join(', ');
+  const appNames = topThreeApps.map((app) => app.name).sort().join(', ');
   return `Top-3 Australia: ${appNames}`;
 }
 
@@ -53,7 +52,7 @@ function WorstToTop(Data) {
     const [name, , , , ...downloads] = appData.split(';');
     const averageDownloads = calculateAverageDownloads(downloads);
     return { name, averageDownloads };
-  }).sort((a, b) => b.averageDownloads - a.averageDownloads);
+  }).sort((a, b) => a.averageDownloads - b.averageDownloads);
   const appNames = apps.map((app) => app.name).join(', ');
   return appNames;
 }
