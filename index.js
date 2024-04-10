@@ -106,19 +106,16 @@ function stackcount(content) {
   }
   return res;
 }
-function getNickname(social) {
-  switch (social) {
-    case 'github':
-      return 'doejohn';
-    case 'linkedin':
-      return 'johndoe';
-    case 'twitter':
-      return 'johndoe_dev';
-    case 'stackoverflow':
-      return 'johndoe';
-    default:
-      return 'Никнейм не найден';
+function getNickname(socialString, socialNetwork) {
+  const socials = socialString.split(', ');
+  for (let i = 0; i < socials.length; i += 1) {
+    const parts = socials[i].split(':/');
+    const username = parts[parts.length - 1].split('/').pop();
+    if (parts[0].includes(socialNetwork)) {
+      return username;
+    }
   }
+  return 'Никнейм не найден';
 }
 
 function calculateExperience(startDate, endDate) {
@@ -135,7 +132,7 @@ function calculateExperience(startDate, endDate) {
 
   return `${years} years ${months} months`;
 }
-function splitEducationStringToString(EdStr) {
+function findEducation(EdStr) {
   const parts = EdStr.split(';');
   let result = '';
   const EdPlaces = parts.map((part) => {
@@ -154,9 +151,9 @@ const candidateAssessment = (content) => {
   const Split = Normalize(content);
   console.log(`Job seeker: ${Split[0]}, ${Split[1]}`);
   console.log(`Required stack: ${stackcount(content)}`);
-  console.log(`GitHub nickname: ${getNickname('github')}`);
+  console.log(`GitHub nickname: ${getNickname(Split.at(4), 'github')}`);
   console.log(`Experience: ${calculateExperience('01.01.2015', '05.06.2022')}`);
-  console.log(`Education: ${splitEducationStringToString(Split.at(7))}`);
+  console.log(`Education: ${findEducation(Split.at(7))}`);
 };
 
 // task 3
@@ -175,10 +172,58 @@ function count(data) {
   return [rewcount, nomcount];
 }
 
+function getMoviesByYear(actorAwards, year) {
+  const moviesForYear = actorAwards.filter((award) => award.includes(year));
+  const moviesList = moviesForYear.map((award) => award.split('—')[4].trim());
+  const uniqueMovies = [...new Set(moviesList)];
+  const sortedMovies = uniqueMovies.sort().join(', ');
+  return sortedMovies;
+}
+
+function calculateAwardPercent(data) {
+  let awards = 0;
+  let nominations = 0;
+  for (let i = 0; i < data.length; i += 1) {
+    if (data[i].startsWith('Награда')) {
+      awards += 1;
+    } else if (data[i].startsWith('Номинация')) {
+      nominations += 1;
+    }
+  }
+  const totalAwardsAndNominations = awards + nominations;
+  const percentageAwards = (awards / totalAwardsAndNominations) * 100;
+  return Math.round(percentageAwards);
+}
+
+function mostAwardedMovie(data) {
+  const awards = {};
+  const nominations = {};
+  for (let i = 0; i < data.length; i += 1) {
+    const movie = data[i].split('—')[4].trim();
+    if (data[i].startsWith('Награда')) {
+      awards[movie] = (awards[movie] || 0) + 1;
+    } else if (data[i].startsWith('Номинация')) {
+      nominations[movie] = (nominations[movie] || 0) + 1;
+    }
+  }
+  const mostSuccessfulMovie = Object.keys(awards).sort().reduce((mostSuccessful, movie) => {
+    if (!mostSuccessful || (awards[movie] + (nominations[movie] || 0))
+  > (awards[mostSuccessful] + (nominations[mostSuccessful] || 0))) {
+      return movie;
+    }
+    return mostSuccessful;
+  }, null);
+  return mostSuccessfulMovie;
+}
+
 const actorRating = (content) => {
   const norm = Normalize(content);
   const [rewards, nominations] = count(norm);
   console.log(`Awards: Rewards: ${rewards}, Nominations: ${nominations}`);
+  console.log(`Movies 2003: ${getMoviesByYear(norm, 2003)}`);
+  console.log(`Rewards percent: ${calculateAwardPercent(norm)}%`);
+  console.log(`Most successful movie: ${mostAwardedMovie(norm)}`);
+  console.log('Awards statisctics: ');
 };
 
 export { tableParsing, candidateAssessment, actorRating };
